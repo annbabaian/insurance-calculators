@@ -49,6 +49,73 @@
     footer{margin-top:34px;color:var(--muted);font-size:14px;text-align:center}
     @media(max-width:860px){.hero{grid-template-columns:1fr}.grid{grid-template-columns:1fr}.wrap{padding:24px 16px 38px}header{margin-bottom:30px}.hero-card{padding:18px}.product{min-height:auto}}
   </style>
+
+<style id="sil-auth-style">
+  html.sil-auth-pending body > *:not(#sil-auth-overlay),
+  html.sil-auth-locked body > *:not(#sil-auth-overlay){display:none!important}
+  #sil-auth-overlay{position:fixed;inset:0;z-index:2147483647;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#eef3ff 0%,#ffffff 45%,#eef3ff 100%);font-family:Arial,"Noto Sans Armenian",sans-serif;color:#111827}
+  #sil-auth-overlay .sil-auth-card{width:min(420px,100%);background:#fff;border:1px solid #e5e7eb;border-radius:24px;box-shadow:0 24px 70px rgba(0,65,245,.18);padding:34px 28px;text-align:center}
+  #sil-auth-overlay .sil-auth-logo{font-weight:800;letter-spacing:.08em;color:#0041f5;font-size:18px;margin-bottom:10px;text-transform:uppercase}
+  #sil-auth-overlay h1{font-size:24px;line-height:1.25;margin:0 0 8px;color:#111827}
+  #sil-auth-overlay p{margin:0 0 22px;color:#6b7280;font-size:14px}
+  #sil-auth-overlay input{width:100%;height:48px;border:1px solid #d1d5db;border-radius:14px;padding:0 14px;font-size:16px;outline:none;margin-bottom:12px}
+  #sil-auth-overlay input:focus{border-color:#0041f5;box-shadow:0 0 0 4px rgba(0,65,245,.10)}
+  #sil-auth-overlay button{width:100%;height:48px;border:0;border-radius:14px;background:#0041f5;color:white;font-weight:700;font-size:16px;cursor:pointer}
+  #sil-auth-overlay button:hover{filter:brightness(.96)}
+  #sil-auth-overlay .sil-auth-error{min-height:20px;margin-top:12px;color:#dc2626;font-size:14px}
+</style>
+<script id="sil-auth-script">
+(function(){
+  document.documentElement.classList.add('sil-auth-pending');
+  const PASSWORD_HASH='f8c796f587f1250f9a42ad4b3a540391842c8ac0504c6500096d0c4b6d14e12e';
+  const AUTH_KEY='sil_calculators_auth_v1';
+  async function sha256(text){
+    const data=new TextEncoder().encode(text);
+    const hash=await crypto.subtle.digest('SHA-256',data);
+    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }
+  function unlock(){
+    document.documentElement.classList.remove('sil-auth-pending','sil-auth-locked');
+    const old=document.getElementById('sil-auth-overlay');
+    if(old) old.remove();
+  }
+  function showLogin(){
+    document.documentElement.classList.remove('sil-auth-pending');
+    document.documentElement.classList.add('sil-auth-locked');
+    const overlay=document.createElement('div');
+    overlay.id='sil-auth-overlay';
+    overlay.innerHTML=`<div class="sil-auth-card">
+      <div class="sil-auth-logo">SIL Insurance</div>
+      <h1>Ապահովագրավճարների հաշվիչներ</h1>
+      <p>Մուտք գործելու համար մուտքագրեք գաղտնաբառը</p>
+      <input id="sil-auth-password" type="password" placeholder="Գաղտնաբառ" autocomplete="current-password" />
+      <button id="sil-auth-button" type="button">Մուտք</button>
+      <div id="sil-auth-error" class="sil-auth-error"></div>
+    </div>`;
+    document.body.appendChild(overlay);
+    const input=document.getElementById('sil-auth-password');
+    const error=document.getElementById('sil-auth-error');
+    async function tryLogin(){
+      error.textContent='';
+      if(await sha256(input.value)===PASSWORD_HASH){
+        sessionStorage.setItem(AUTH_KEY,'1');
+        unlock();
+      }else{
+        error.textContent='Սխալ գաղտնաբառ';
+        input.value='';
+        input.focus();
+      }
+    }
+    document.getElementById('sil-auth-button').addEventListener('click',tryLogin);
+    input.addEventListener('keydown',e=>{if(e.key==='Enter')tryLogin();});
+    setTimeout(()=>input.focus(),50);
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    if(sessionStorage.getItem(AUTH_KEY)==='1') unlock(); else showLogin();
+  });
+})();
+</script>
+
 </head>
 <body>
   <div class="wrap">
