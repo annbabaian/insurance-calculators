@@ -10,11 +10,11 @@
   --text:#152033; --muted:#667085; --border:#d9e2f2; --danger:#c62828;
 }
 *{box-sizing:border-box}
-body{margin:0;background:linear-gradient(180deg,#eef3ff 0,#fff 42%);font-family:Arial,"Noto Sans Armenian",sans-serif;color:var(--text)}
+body{margin:0;background:linear-gradient(rgba(0,20,80,.38),rgba(0,20,80,.38)),url("images/casco-image-1-ee64797e9fbc.jpg") center center/cover fixed no-repeat;font-family:Arial,"Noto Sans Armenian",sans-serif;color:var(--text)}
 .hidden{display:none!important}
-.login-screen{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login-screen{min-height:100vh;display:grid;place-items:center;padding:20px;background:transparent}
 .login-card{width:min(390px,100%);background:#fff;padding:32px;border-radius:20px;box-shadow:0 18px 60px rgba(0,65,255,.14);border:1px solid #e3eaff;text-align:center}
-.logo{font-size:34px;font-weight:900;color:var(--sil);letter-spacing:-1px}
+.logo{display:flex;justify-content:center;align-items:center}.logo img{width:min(260px,78vw);height:auto;display:block}
 .login-card h2{margin:12px 0 6px}.login-card p{color:var(--muted);margin:0 0 20px}
 input,select{width:100%;height:44px;border:1px solid var(--border);border-radius:10px;padding:0 12px;font-size:14px;background:white;color:var(--text)}
 input:focus,select:focus{outline:3px solid rgba(0,65,255,.12);border-color:var(--sil)}
@@ -23,10 +23,10 @@ button{border:0;border-radius:10px;height:46px;padding:0 18px;font-weight:800;cu
 .error{color:var(--danger);font-size:13px;margin-top:10px}
 .container{max-width:1050px;margin:auto;padding:24px 16px 52px}
 header{text-align:center;margin:4px 0 18px}
-header h1{margin:4px 0 5px;color:var(--sil);font-size:30px}
+header h1{margin:4px 0 5px;color:#fff;font-size:30px;text-shadow:0 2px 14px rgba(0,0,0,.35)}
 header p{margin:0;color:var(--muted)}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
-.card{background:var(--card);border:1px solid #e3eaff;border-radius:18px;padding:20px;box-shadow:0 10px 32px rgba(31,55,107,.07)}
+.card{background:rgba(255,255,255,.93);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid #e3eaff;border-radius:18px;padding:20px;box-shadow:0 10px 32px rgba(31,55,107,.07)}
 .card h2{font-size:18px;margin:0 0 16px;color:#10275b;border-bottom:2px solid #edf1ff;padding-bottom:10px}
 .field{margin-bottom:14px}.field label{display:block;font-weight:700;font-size:13px;margin-bottom:6px}.hint{font-size:11px;color:var(--muted);margin-top:5px}
 .full{grid-column:1/-1}
@@ -46,7 +46,7 @@ header p{margin:0;color:var(--muted)}
 <body>
 <section id="loginScreen" class="login-screen">
   <div class="login-card">
-    <div class="logo">SIL</div>
+    <div class="logo"><img src="images/casco-image-2-f9666da28b6d.png" alt="SIL Insurance"></div>
     <h2>ԿԱՍԿՈ ՀԱՇՎԻՉ</h2>
     <p>Մուտքագրեք գաղտնաբառը</p>
     <input id="password" type="password" autocomplete="current-password" placeholder="Գաղտնաբառ">
