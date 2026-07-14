@@ -5,912 +5,209 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>ԿԱՍԿՈ ՀԱՇՎԻՉ</title>
 <style>
-  @font-face {
-    font-family: 'SFArmenian';
-    src: url('fonts/casco-font-1-1009cae526f9.ttf') format('truetype');
-    font-weight: normal;
-  }
-  @font-face {
-    font-family: 'SFPro';
-    src: url('fonts/casco-font-2-3447039740fb.ttf') format('truetype');
-    font-weight: normal;
-  }
-  :root {
-    --bg: transparent;
-    --surface: rgba(255,255,255,0.85);
-    --surface2: rgba(255,255,255,0.7);
-    --border: #d1d5db;
-    --accent: #1a56db;
-    --accent2: #1a56db;
-    --text: #111827;
-    --muted: #4b5563;
-    --red: #f85149;
-    --gold: #d29922;
-    --radius: 10px;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: transparent;
-    color: var(--text);
-    font-family: 'SFArmenian', 'SFPro', 'Segoe UI', system-ui, sans-serif;
-    font-size: 14px;
-    min-height: 100vh;
-    padding: 24px 16px 48px;
-  }
-
-  .container {
-    max-width: 780px;
-    margin: 0 auto;
-  }
-
-  header {
-    text-align: center;
-    margin-bottom: 32px;
-  }
-
-  header .badge {
-    display: inline-block;
-    background: linear-gradient(135deg, #1f6feb 0%, #388bfd 100%);
-    color: #fff;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    padding: 4px 14px;
-    border-radius: 20px;
-    margin-bottom: 14px;
-  }
-
-  header h1 {
-    font-size: 28px;
-    font-weight: 800;
-    letter-spacing: -0.5px;
-    color: #111827;
-    margin-bottom: 6px;
-  }
-
-  header p {
-    color: var(--muted);
-    font-size: 13px;
-  }
-
-  .card {
-    background: rgba(255,255,255,0.85);
-    border: 1px solid rgba(0,0,0,0.1);
-    border-radius: var(--radius);
-    padding: 24px;
-    margin-bottom: 20px;
-  }
-
-  .card h2 {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: var(--accent2);
-    margin-bottom: 18px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .card h2::before {
-    content: '';
-    display: inline-block;
-    width: 3px;
-    height: 16px;
-    background: var(--accent2);
-    border-radius: 2px;
-  }
-
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  @media (max-width: 540px) {
-    .grid { grid-template-columns: 1fr; }
-  }
-
-  .field {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .field.full { grid-column: 1 / -1; }
-
-  label {
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--muted);
-    letter-spacing: 0.3px;
-  }
-
-  input[type="number"],
-  select {
-    width: 100%;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text);
-    font-size: 14px;
-    padding: 10px 12px;
-    outline: none;
-    transition: border-color 0.2s;
-    appearance: none;
-    -webkit-appearance: none;
-  }
-
-  select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%238b949e' d='M1 1l5 5 5-5'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 36px;
-    cursor: pointer;
-  }
-
-  input[type="number"]:focus,
-  select:focus {
-    border-color: var(--accent2);
-  }
-
-  input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-  .hint {
-    font-size: 11px;
-    color: var(--muted);
-    font-style: italic;
-    margin-top: 2px;
-  }
-
-  /* Results */
-  .result-card {
-    background: rgba(255,255,255,0.9);
-    border: 1px solid rgba(46,160,67,0.3);
-    border-radius: var(--radius);
-    padding: 28px;
-    margin-top: 24px;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .result-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, #1a56db, #60a5fa);
-  }
-
-  .result-card h2 {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: #1a56db;
-    margin-bottom: 20px;
-  }
-
-  .result-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-
-  @media (max-width: 540px) {
-    .result-grid { grid-template-columns: 1fr; }
-  }
-
-  .result-item {
-    background: rgba(0,0,0,0.05);
-    border: 1px solid rgba(0,0,0,0.1);
-    border-radius: 8px;
-    padding: 16px;
-  }
-
-  .result-item .lbl {
-    font-size: 11px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    font-weight: 600;
-    margin-bottom: 6px;
-  }
-
-  .result-item .val {
-    font-size: 22px;
-    font-weight: 800;
-    color: #111827;
-    letter-spacing: -0.5px;
-  }
-
-  .result-item.highlight {
-    background: rgba(26,86,219,0.1);
-    border-color: rgba(26,86,219,0.3);
-    grid-column: 1 / -1;
-  }
-
-  .result-item.highlight .lbl { color: #1a56db; }
-  .result-item.highlight .val { font-size: 32px; color: #1a56db; }
-
-  .error-msg {
-    background: rgba(248,81,73,0.1);
-    border: 1px solid rgba(248,81,73,0.3);
-    border-radius: 8px;
-    padding: 14px 16px;
-    color: var(--red);
-    font-size: 13px;
-    font-weight: 600;
-    display: none;
-  }
-
-  .notes {
-    margin-top: 20px;
-    padding: 16px;
-    background: rgba(255,255,255,0.8);
-    border: 1px solid rgba(56,139,253,0.15);
-    border-radius: 8px;
-  }
-
-  .notes p {
-    font-size: 11.5px;
-    color: var(--muted);
-    line-height: 1.7;
-    margin-bottom: 6px;
-  }
-  .notes p:last-child { margin-bottom: 0; }
-  .notes p strong { color: var(--accent2); }
-
-  .btn-calc {
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #1a56db 0%, #1e40af 100%);
-    color: #fff;
-    font-size: 15px;
-    font-weight: 700;
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    letter-spacing: 0.3px;
-    transition: opacity 0.15s, transform 0.1s;
-    margin-top: 4px;
-  }
-
-  .btn-calc:hover { opacity: 0.9; }
-  .btn-calc:active { transform: scale(0.99); }
-
-  .separator { height: 1px; background: var(--border); margin: 6px 0 20px; }
-
-  .rate-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 12px;
-    color: var(--muted);
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 3px 8px;
-    margin-top: 6px;
-  }
-
-
-  /* Travel calculator inspired visual style */
-  :root{
-    --accent:#0041FF;
-    --accent2:#0041FF;
-    --text:#14151f;
-    --muted:#6b7280;
-    --border:#e5e7eb;
-    --radius:22px;
-  }
-
-  body{
-    margin:0;
-    padding:24px;
-    background:transparent;
-    font-family:Arial, 'SFArmenian', 'SFPro', 'Noto Sans Armenian', sans-serif;
-    color:var(--text);
-  }
-
-  body > div:first-child{
-    background-image:
-      linear-gradient(rgba(0,0,0,.30), rgba(0,0,0,.30)),
-      url('images/casco-image-1-ee64797e9fbc.jpg') !important;
-    background-size:cover !important;
-    background-position:center !important;
-  }
-
-  .container{max-width:900px;margin:0 auto;}
-
-  header{
-    min-height:72px;
-    margin-bottom:8px;
-    display:flex;
-    flex-direction:column;
-    align-items:flex-start;
-    justify-content:flex-end;
-    text-align:left;
-  }
-
-  header > div{
-    justify-content:flex-start !important;
-    margin-bottom:12px !important;
-  }
-
-  header img{
-    height:120px !important;
-    width:auto;
-    filter:drop-shadow(0 4px 14px rgba(0,0,0,.22));
-  }
-
-  header p{
-    color:rgba(255,255,255,.92) !important;
-    font-size:18px !important;
-    font-weight:700 !important;
-    text-shadow:0 2px 10px rgba(0,0,0,.35);
-    margin-bottom:6px !important;
-  }
-
-  header h1{
-    color:#fff;
-    font-size:34px;
-    letter-spacing:-1px;
-    text-shadow:0 2px 12px rgba(0,0,0,.35);
-    margin:0;
-  }
-
-  .card,
-  .notes{
-    background:rgba(255,255,255,.88);
-    backdrop-filter:blur(14px);
-    -webkit-backdrop-filter:blur(14px);
-    border:1px solid rgba(255,255,255,.45);
-    border-radius:22px;
-    box-shadow:0 20px 60px rgba(0,0,0,.25);
-  }
-
-  .card{padding:22px;margin-bottom:16px;}
-  .notes{padding:16px;}
-
-  .card h2{
-    color:var(--text);
-    font-size:15px;
-    letter-spacing:0;
-    text-transform:none;
-    margin-bottom:18px;
-  }
-
-  .card h2::before{display:none;}
-
-  .grid{gap:14px;}
-
-  label{
-    display:block;
-    font-size:13px;
-    font-weight:700;
-    color:var(--text);
-    letter-spacing:0;
-    margin-bottom:1px;
-  }
-
-  input[type="number"],
-  input[type="text"],
-  select{
-    width:100%;
-    padding:13px 12px;
-    border:1px solid var(--border);
-    border-radius:14px;
-    font-size:15px;
-    background:#fff;
-    color:var(--text);
-  }
-
-  input[type="number"]:focus,
-  input[type="text"]:focus,
-  select:focus{
-    outline:2px solid rgba(49,55,253,.18);
-    border-color:var(--accent);
-  }
-
-  .hint{font-size:11px;color:var(--muted);margin-top:2px;}
-
-  .btn-calc{
-    width:100%;
-    padding:15px 18px;
-    border:none;
-    border-radius:16px;
-    background:var(--accent);
-    color:#fff;
-    font-size:15px;
-    font-weight:800;
-    box-shadow:0 12px 30px rgba(49,55,253,.28);
-    margin:2px 0 16px;
-  }
-
-  .btn-calc:hover{opacity:.94;transform:translateY(-1px);}
-  .btn-calc:active{transform:scale(.99);}
-
-  .result-card{
-    background:#0041FF;
-    color:#fff;
-    border:none;
-    border-radius:22px;
-    box-shadow:0 20px 60px rgba(0,0,0,.25);
-    padding:22px;
-    margin-top:0;
-  }
-
-  .result-card::before{display:none;}
-  .result-card h2{color:#fff;font-size:15px;letter-spacing:0;text-transform:none;margin-bottom:16px;}
-  .result-grid{gap:12px;}
-
-  .result-item,
-  .result-item.highlight{
-    background:rgba(255,255,255,.12);
-    border:1px solid rgba(255,255,255,.20);
-    border-radius:16px;
-    padding:16px;
-  }
-
-  .result-item .lbl,
-  .result-item.highlight .lbl{
-    color:rgba(255,255,255,.82);
-    font-size:12px;
-    text-transform:none;
-    letter-spacing:0;
-  }
-
-  .result-item .val,
-  .result-item.highlight .val{
-    color:#fff;
-    font-size:24px;
-    font-weight:900;
-  }
-
-  .result-item.highlight .val{font-size:38px;}
-
-  .error-msg{
-    border-radius:12px;
-    padding:12px 14px;
-    background:#fef2f2;
-    border:1px solid #fecaca;
-    color:#dc2626;
-  }
-
-  @media(max-width:760px){
-    body{padding:14px;}
-    header{min-height:64px;}
-    header img{height:90px !important;}
-    header h1{font-size:28px;}
-    header p{font-size:15px !important;}
-    .result-item.highlight .val{font-size:32px;}
-  }
-
+:root{
+  --sil:#0041FF; --sil-dark:#0034cc; --bg:#f4f7ff; --card:#fff;
+  --text:#152033; --muted:#667085; --border:#d9e2f2; --danger:#c62828;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#eef3ff 0,#fff 42%);font-family:Arial,"Noto Sans Armenian",sans-serif;color:var(--text)}
+.hidden{display:none!important}
+.login-screen{min-height:100vh;display:grid;place-items:center;padding:20px}
+.login-card{width:min(390px,100%);background:#fff;padding:32px;border-radius:20px;box-shadow:0 18px 60px rgba(0,65,255,.14);border:1px solid #e3eaff;text-align:center}
+.logo{font-size:34px;font-weight:900;color:var(--sil);letter-spacing:-1px}
+.login-card h2{margin:12px 0 6px}.login-card p{color:var(--muted);margin:0 0 20px}
+input,select{width:100%;height:44px;border:1px solid var(--border);border-radius:10px;padding:0 12px;font-size:14px;background:white;color:var(--text)}
+input:focus,select:focus{outline:3px solid rgba(0,65,255,.12);border-color:var(--sil)}
+button{border:0;border-radius:10px;height:46px;padding:0 18px;font-weight:800;cursor:pointer}
+.primary{width:100%;background:var(--sil);color:white;margin-top:12px}.primary:hover{background:var(--sil-dark)}
+.error{color:var(--danger);font-size:13px;margin-top:10px}
+.container{max-width:1050px;margin:auto;padding:24px 16px 52px}
+header{text-align:center;margin:4px 0 18px}
+header h1{margin:4px 0 5px;color:var(--sil);font-size:30px}
+header p{margin:0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+.card{background:var(--card);border:1px solid #e3eaff;border-radius:18px;padding:20px;box-shadow:0 10px 32px rgba(31,55,107,.07)}
+.card h2{font-size:18px;margin:0 0 16px;color:#10275b;border-bottom:2px solid #edf1ff;padding-bottom:10px}
+.field{margin-bottom:14px}.field label{display:block;font-weight:700;font-size:13px;margin-bottom:6px}.hint{font-size:11px;color:var(--muted);margin-top:5px}
+.full{grid-column:1/-1}
+.action{background:var(--sil);color:#fff;width:100%;font-size:16px;margin-top:4px}
+.result-card{background:linear-gradient(135deg,#0041FF,#18379f);color:#fff}
+.result-card h2{color:#fff;border-color:rgba(255,255,255,.2)}
+.results{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.result{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);padding:13px;border-radius:12px}
+.result span{display:block;font-size:12px;opacity:.8;margin-bottom:5px}.result strong{font-size:20px}
+.breakdown{margin-top:14px;background:#f8faff;border:1px solid #dfe7ff;border-radius:14px;padding:14px}
+.breakdown h3{margin:0 0 10px;font-size:15px;color:#10275b}
+.row{display:flex;justify-content:space-between;gap:12px;border-bottom:1px dashed #dfe4ef;padding:7px 0;font-size:13px}.row:last-child{border-bottom:0}
+.notes{font-size:12px;color:var(--muted);line-height:1.55;margin-top:14px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.full{grid-column:auto}.results{grid-template-columns:1fr}header h1{font-size:25px}}
 </style>
 </head>
 <body>
-<div style="
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-image: url('images/casco-image-1-ee64797e9fbc.jpg');
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
-  opacity: 1;
-  pointer-events: none;
-  z-index: 0;
-"></div>
-<div class="container" style="position:relative; z-index:1;">
-
-  <header>
-    <h1>ԿԱՍԿՈ ՀԱՇՎԻՉ</h1>
-  </header>
-
-  <!-- Basic Info -->
-  <div class="card">
-    <h2>Հիմնական Տվյալներ</h2>
-    <div class="grid">
-      <div class="field full">
-        <label>Ապահովագրական գումար (AMD)</label>
-        <input type="text" id="insuredAmount" value="20 000 000" inputmode="numeric" autocomplete="off">
-      </div>
-      <div class="field">
-        <label>Ապահովադրի տեսակ</label>
-        <select id="clientType">
-          <option value="բանկային լիզինգ">Բանկային լիզինգ</option>
-          <option value="Իրավաբանական անձ">Իրավաբանական անձ</option>
-          <option value="Ֆիզիկական անձ">Ֆիզիկական անձ</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Մեքենայի տարեթիվ</label>
-        <select id="carYear">
-          <option value="2021-ից բարձր">2021-ից բարձր</option>
-          <option value="2016-2020">2016–2020</option>
-          <option value="2011-2015">2011–2015</option>
-          <option value="2006-2010">2006–2010</option>
-          <option value="մինչև 2005">Մինչև 2005</option>
-        </select>
-      </div>
-    </div>
+<section id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div class="logo">SIL</div>
+    <h2>ԿԱՍԿՈ ՀԱՇՎԻՉ</h2>
+    <p>Մուտքագրեք գաղտնաբառը</p>
+    <input id="password" type="password" autocomplete="current-password" placeholder="Գաղտնաբառ">
+    <button class="primary" onclick="login()">ՄՈՒՏՔ</button>
+    <div id="loginError" class="error hidden">Սխալ գաղտնաբառ</div>
   </div>
+</section>
 
-  <!-- Coverage Options -->
-  <div class="card">
-    <h2>Ծածկույթ և Պայմաններ</h2>
-    <div class="grid">
-      <div class="field">
-        <label>Երաշխիքային սպասարկում</label>
-        <select id="warranty">
-          <option value="ներառել">Ներառել</option>
-          <option value="չներառել">Չներառել</option>
-        </select>
-        <div class="hint">Թույլատրվում է միայն 2018թ.+ մեքենաների համար</div>
-      </div>
-      <div class="field">
-        <label>Վարորդների քանակ</label>
-        <select id="drivers">
-          <option value="Սահմանափակ">Սահմանափակ</option>
-          <option value="Անսահմանափակ">Անսահմանափակ</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Ֆրանշիզա</label>
-        <select id="franchise">
-          <option value="Ֆրանշիզան անփոփոխ">Ֆրանշիզան անփոփոխ</option>
-          <option value="Ֆրանշիզայի կիսում">Ֆրանշիզայի կիսում</option>
-          <option value="Մինիմամալ ֆրանշիզա">Մինիմամալ ֆրանշիզա</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Վճարման ձև</label>
-        <select id="payment">
-          <option value="Միանվագ">Միանվագ</option>
-          <option value="2   վճարում">2 վճարում</option>
-          <option value="4   վճարում">4 վճարում</option>
-          <option value="12 վճարում">12 վճարում</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Ճեկ կանոններ</label>
-        <select id="jackRules">
-          <option value="ներառել">Ներառել</option>
-          <option value="չներառել">Չներառել</option>
-        </select>
-        <div class="hint">Ֆ.Ա.-ի համար միայն. Իր.Ա. & Բ.Լ.-ի վրա ազդեցություն չկա</div>
-      </div>
-      <div class="field">
-        <label>Տարածաշրջան</label>
-        <select id="region">
-          <option value="Միայն ՀՀ">Միայն ՀՀ</option>
-          <option value="ՀՀ և Վրաստան">ՀՀ և Վրաստան</option>
-          <option value="ՀՀ, Վրաստան և  ԱՊՀ երկրներ">ՀՀ, Վրաստան և ԱՊՀ</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Գողության ռիսկ (ներառ. մանր դետ.)</label>
-        <select id="theft">
-          <option value="ներառել">Ներառել</option>
-          <option value="չներառել">Չներառել</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Գողության ռիսկ չներառելու տոկոսը</label>
-        <input type="number" id="theftExclude" value="30" min="0" max="30" step="1">
-        <div class="hint">Առավ. 30% (ըստ կանոնների)</div>
-      </div>
-      <div class="field">
-        <label>Էլեկտրոմոբիլ</label>
-        <select id="electric">
-          <option value="Ոչ">Ոչ</option>
-          <option value="Այո">Այո</option>
-        </select>
-      </div>
+<main id="app" class="hidden">
+<div class="container">
+<header><h1>ԿԱՍԿՈ ՀԱՇՎԻՉ</h1></header>
+<div class="grid">
+  <section class="card">
+    <h2>Հիմնական տվյալներ</h2>
+    <div class="field"><label>Ապահովագրական գումար (AMD)</label><input id="amount" inputmode="numeric" placeholder="օր.՝ 5 625 000"></div>
+    <div class="field"><label>Ապահովադրի տեսակ</label><select id="client">
+      <option>բանկային լիզինգ</option><option>Իրավաբանական անձ</option><option selected>Ֆիզիկական անձ</option>
+    </select></div>
+    <div class="field"><label>Մեքենայի տարեթիվ</label><select id="year">
+      <option>2021-ից բարձր</option><option selected>2016-2020</option><option>2011-2015</option><option>2006-2010</option><option>մինչև 2005</option>
+    </select></div>
+    <div class="field"><label>Երաշխիքային սպասարկում</label><select id="warranty"><option>ներառել</option><option selected>չներառել</option></select>
+      <div class="hint">Excel-ի հաշվարկով թույլատրվում է միայն «2021-ից բարձր» տարբերակի համար։</div></div>
+    <div class="field"><label>Վարորդների քանակ</label><select id="drivers"><option>Սահմանափակ</option><option selected>Անսահմանափակ</option></select></div>
+    <div class="field"><label>Ֆրանշիզա</label><select id="franchise"><option>Ֆրանշիզան անփոփոխ</option><option selected>Ֆրանշիզայի կիսում</option><option>Մինիմամալ ֆրանշիզա</option></select></div>
+  </section>
+
+  <section class="card">
+    <h2>Ծածկույթ և պայմաններ</h2>
+    <div class="field"><label>Վճարման ձև</label><select id="payment"><option>Միանվագ</option><option selected>2 վճարում</option><option>4 վճարում</option><option>12 վճարում</option></select></div>
+    <div class="field"><label>Ճեկ կանոններ</label><select id="jack"><option selected>ներառել</option><option>չներառել</option></select>
+      <div class="hint">Ազդեցություն ունի միայն ֆիզիկական անձի համար։</div></div>
+    <div class="field"><label>Տարածաշրջան</label><select id="region"><option selected>Միայն ՀՀ</option><option>ՀՀ և Վրաստան</option><option>ՀՀ, Վրաստան և ԱՊՀ երկրներ</option></select></div>
+    <div class="field"><label>Գողության ռիսկ՝ ներառյալ մանր դետալներ</label><select id="theft"><option selected>ներառել</option><option>չներառել</option></select></div>
+    <div class="field"><label>Գողության ռիսկ չներառելու չափը (%)</label><input id="theftPct" type="number" min="0" max="30" step="1" value="30"><div class="hint">Հաշվարկում առավելագույնը՝ 30%</div></div>
+    <div class="field"><label>Էլեկտրոմոբիլ</label><select id="electric"><option>Ոչ</option><option selected>Այո</option></select></div>
+  </section>
+
+  <section class="card">
+    <h2>Բոնուս Մալուս / վնասաբերություն</h2>
+    <div class="field"><label>Բոնուս Մալուս դաս</label><select id="bm"><option>չընտրել</option><option selected>&lt;=7</option><option>8-10</option><option>11-12</option><option>13-14</option></select></div>
+    <div class="field"><label>Վնասաբերություն</label><select id="loss"><option selected>չընտրել</option><option>Վնասաբերությունը >= 90%</option><option>Վնասաբերությունը < 90%</option></select></div>
+    <div class="notes">Ընտրեք ԲՄ կամ վնասաբերություն՝ ոչ երկուսը միաժամանակ։</div>
+  </section>
+
+  <section class="card">
+    <h2>Միջնորդավճար և շահույթ</h2>
+    <div class="field"><label>Միջնորդավճար (%)</label><input id="commission" type="number" min="0" max="80" step="0.1" value="10"></div>
+    <div class="field"><label>Շահույթ (%)</label><input id="profit" type="number" value="10" readonly></div>
+    <div class="hint">Excel-ում շահույթը սահմանված է 10%։ Միջնորդավճարը մասնակցում է սակագնի հաշվարկին՝ որպես բաժանարար։</div>
+  </section>
+
+  <section class="card full">
+    <button class="action" onclick="calculate()">ՀԱՇՎԵԼ ԱՊԱՀՈՎԱԳՐԱՎՃԱՐԸ</button>
+    <div id="calcError" class="error hidden"></div>
+  </section>
+
+  <section id="resultCard" class="card result-card full hidden">
+    <h2>Հաշվարկի արդյունք</h2>
+    <div class="results">
+      <div class="result"><span>Ապահովագրական գումար</span><strong id="rAmount">—</strong></div>
+      <div class="result"><span>Սակագին</span><strong id="rTariff">—</strong></div>
+      <div class="result"><span>Միջնորդավճար</span><strong id="rCommission">—</strong></div>
+      <div class="result"><span>Ապահովագրավճար</span><strong id="rPremium">—</strong></div>
     </div>
-  </div>
-
-  <!-- Bonus/Malus & Loss Ratio -->
-  <div class="card">
-    <h2>Բոնուս Մալուս / Վնասաբերություն</h2>
-    <div class="notes" style="margin-bottom:16px; margin-top:0;">
-      <p><strong>Կանոն:</strong> Ընտրեք <strong>կամ</strong> ԲՄ <strong>կամ</strong> Վնասաբերություն — ոչ երկուսը միաժամանակ։</p>
-      <p>• 1 տարի Սիլ-ում կասկո → ստուգեք երկուսն էլ, ընտրեք մաքսիմումը<br>
-         • Կասկո չի ունեցել → ընտրեք ԲՄ դասը<br>
-         • 2+ տարի Սիլ-ում կասկո → ընտրեք Վնասաբերությունը</p>
-    </div>
-    <div class="grid">
-      <div class="field">
-        <label>Բոնուս Մալուս դաս</label>
-        <select id="bm">
-          <option value="չընտրել">Չընտրել</option>
-          <option value="<=7">≤ 7 դաս</option>
-          <option value="8-10" selected>8–10 դաս</option>
-          <option value="11-12">11–12 դաս</option>
-          <option value="13-14">13–14 դաս</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Վնասաբերություն</label>
-        <select id="lossRatio">
-          <option value="չընտրել">Չընտրել</option>
-          <option value="Վնասաբերությունը  >=  90% ">Վնասաբերություն ≥ 90%</option>
-          <option value="Վնասաբերությունը  < 90% ">Վնասաբերություն &lt; 90%</option>
-        </select>
-      </div>
-    </div>
-    <div class="error-msg" id="errorMsg" style="margin-top:14px;"></div>
-  </div>
-
-  <button class="btn-calc" onclick="calculate()">Հաշվել Ապահովագրավճարը</button>
-
-  <!-- Result -->
-  <div class="result-card" id="resultCard" style="display:block;">
-    <h2>Հաշվարկի Արդյունք</h2>
-    <div class="result-grid" id="resultGrid">
-      <div class="result-item">
-        <div class="lbl">Ապ. Գումար</div>
-        <div class="val" id="rAmount">—</div>
-      </div>
-      <div class="result-item">
-        <div class="lbl">Զուտ Սակագին</div>
-        <div class="val" id="rNetRate">—</div>
-      </div>
-      <div class="result-item highlight">
-        <div class="lbl">Ապահովագրավճար</div>
-        <div class="val" id="rPremium">—</div>
-      </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="notes" style="margin-top:20px;">
-    <p><strong>Նշումներ:</strong></p>
-    <p>• Երաշխիքային սպ. ներառել թույլատրվում է <strong>2018թ.-ից բարձր</strong> տարեթվով մեքենաների համար</p>
-    <p>• Գողության ռիսկ չներառելու առ. <strong>30%</strong> (ավելի բարձր նշելիս՝ հաշվիչն ընդունում է 30%)</p>
-    <p>• Ճեկ կանոնների ներառման դեպքում <strong>Իրավ. Անձ</strong> և <strong>Բանկ. Լիզ.</strong> կողմից ազդեցություն չկա</p>
-    <p>• Եթե ԲՄ = "Չընտրել" <strong>և</strong> Վնասաբ. = "Չընտրել" → հաշվարկ հնարավոր չէ</p>
-  </div>
-
+  </section>
 </div>
+</div>
+</main>
 
 <script>
-// ─── Lookup tables from "result 2" sheet ────────────────────────────────────
-// Base rate lookup: [clientType][carYear][amountBracket] → base brutto max rate
-// amountBracket: '<7m' or '>7m'
-const BASE_RATES = {
-  'բանկային լիզինգ': {
-    'մինչև 2005':   { '<7m': 0.013186813186813187, '>7m': 0.013186813186813187 },
-    '2006-2010':    { '<7m': 0.013186813186813187, '>7m': 0.013186813186813187 },
-    '2011-2015':    { '<7m': 0.013186813186813187, '>7m': 0.013186813186813187 },
-    '2016-2020':    { '<7m': 0.013186813186813187, '>7m': 0.013186813186813187 },
-    '2021-ից բարձր':{ '<7m': 0.013186813186813187, '>7m': 0.013186813186813187 },
-  },
-  'Իրավաբանական անձ': {
-    'մինչև 2005':   { '<7m': 0.01631868131868132, '>7m': 0.014241758241758242 },
-    '2006-2010':    { '<7m': 0.01631868131868132, '>7m': 0.014241758241758242 },
-    '2011-2015':    { '<7m': 0.01631868131868132, '>7m': 0.014241758241758242 },
-    '2016-2020':    { '<7m': 0.01631868131868132, '>7m': 0.014241758241758242 },
-    '2021-ից բարձր':{ '<7m': 0.01631868131868132, '>7m': 0.014241758241758242 },
-  },
-  'Ֆիզիկական անձ': {
-    'մինչև 2005':   { '<7m': 0.018131868131868133, '>7m': 0.015824175824175824 },
-    '2006-2010':    { '<7m': 0.018131868131868133, '>7m': 0.015824175824175824 },
-    '2011-2015':    { '<7m': 0.018131868131868133, '>7m': 0.015824175824175824 },
-    '2016-2020':    { '<7m': 0.018131868131868133, '>7m': 0.015824175824175824 },
-    '2021-ից բարձր':{ '<7m': 0.018131868131868133, '>7m': 0.015824175824175824 },
-  }
+const PASSWORD='SIL2026';
+function login(){
+ const ok=document.getElementById('password').value===PASSWORD;
+ document.getElementById('loginError').classList.toggle('hidden',ok);
+ if(ok){document.getElementById('loginScreen').classList.add('hidden');document.getElementById('app').classList.remove('hidden');}
+}
+document.getElementById('password').addEventListener('keydown',e=>{if(e.key==='Enter')login()});
+
+const BASE={
+ 'բանկային լիզինգ':{
+  'մինչև 2005':{'<7':.013186813186813187,'>7':.013186813186813187},
+  '2006-2010':{'<7':.013186813186813187,'>7':.013186813186813187},
+  '2011-2015':{'<7':.013186813186813187,'>7':.013186813186813187},
+  '2016-2020':{'<7':.013186813186813187,'>7':.013186813186813187},
+  '2021-ից բարձր':{'<7':.013186813186813187,'>7':.013186813186813187}},
+ 'Իրավաբանական անձ':{
+  'մինչև 2005':{'<7':.01631868131868132,'>7':.014241758241758242},
+  '2006-2010':{'<7':.01631868131868132,'>7':.014241758241758242},
+  '2011-2015':{'<7':.01631868131868132,'>7':.014241758241758242},
+  '2016-2020':{'<7':.01631868131868132,'>7':.014241758241758242},
+  '2021-ից բարձր':{'<7':.01631868131868132,'>7':.014241758241758242}},
+ 'Ֆիզիկական անձ':{
+  'մինչև 2005':{'<7':.018131868131868133,'>7':.015824175824175824},
+  '2006-2010':{'<7':.018131868131868133,'>7':.022267393067225427},
+  '2011-2015':{'<7':.018131868131868133,'>7':.015824175824175824},
+  '2016-2020':{'<7':.018131868131868133,'>7':.015824175824175824},
+  '2021-ից բարձր':{'<7':.018131868131868133,'>7':.015824175824175824}}
 };
-
-// Minimum tariff floors per [amountBracket][clientType]
-const MIN_TARIFF = {
-  '<7m': {
-    'Ֆիզիկական անձ':    0.0217,
-    'բանկային լիզինգ':  0.0123,
-    'Իրավաբանական անձ': 0.0115
-  },
-  '>7m': {
-    'Ֆիզիկական անձ':    0.0134,
-    'բանկային լիզինգ':  0.0089,
-    'Իրավաբանական անձ': 0.0088
-  }
+const FLOOR={
+ '<7':{'Ֆիզիկական անձ':.0217,'բանկային լիզինգ':.0123,'Իրավաբանական անձ':.0115},
+ '>7':{'Ֆիզիկական անձ':.0134,'բանկային լիզինգ':.0089,'Իրավաբանական անձ':.0088}
 };
+const BM={'<=7':-.002662794378746934,'8-10':0,'11-12':.0055275334397962665,'13-14':.010545889076784134};
+const FR={'Ֆրանշիզան անփոփոխ':0,'Ֆրանշիզայի կիսում':.0016974281768410105,'Մինիմամալ ֆրանշիզա':.004073827624418436};
+const fmt=n=>new Intl.NumberFormat('hy-AM').format(Math.round(n));
+const pct=n=>(n*100).toFixed(4)+'%';
 
-// Coefficients (additive deltas on the net rate scale before profit/commission)
-const COEFF = {
-  warranty: {
-    'ներառել':   0.003956043956043956,
-    'չներառել':  0
-  },
-  drivers: {
-    'Անսահմանափակ': 0.003,
-    'Սահմանափակ':   0
-  },
-  franchise: {
-    'Ֆրանշիզայի կիսում':  0.0016974281768410105,
-    'Մինիմամալ ֆրանշիզա': 0.004073827624418436,
-    'Ֆրանշիզան անփոփոխ':  0
-  },
-  bm: {
-    'չընտրել': null,
-    '<=7':     -0.002662794378746934,
-    '8-10':    0,
-    '11-12':   0.0055275334397962665,
-    '13-14':   0.010545889076784134
-  },
-  lossRatio: {
-    'չընտրել':                      null,
-    'Վնասաբերությունը  >=  90% ':   0.001978021978021978,
-    'Վնասաբերությունը  < 90% ':     0
-  },
-  payment: {
-    'Միանվագ':      0,
-    '2   վճարում':  0.0006593406593406593,
-    '4   վճարում':  0.0013186813186813187,
-    '12 վճարում':   0.0026373626373626374
-  },
-  jackRules: {
-    'ներառել':  0.0026373626373626374,  // only for Ֆիզիկական անձ
-    'չներառել': 0
-  },
-  theft: {
-    'ներառել':   0,
-    'չներառել': -0.003956043956043956
-  },
-  region: {
-    'Միայն ՀՀ':                       0,
-    'ՀՀ և Վրաստան':                   0.0006593406593406593,
-    'ՀՀ, Վրաստան և  ԱՊՀ երկրներ':    0.0026373626373626374
-  },
-  electric: {
-    'Այո': -0.001,
-    'Ոչ':  0
-  }
-};
-
-function fmt(n) {
-  return new Intl.NumberFormat('hy-AM').format(Math.round(n));
-}
-function fmtPct(n) {
-  return (n * 100).toFixed(4) + '%';
-}
-function fmtPct2(n) {
-  return (n * 100).toFixed(2) + '%';
-}
-
-function calculate() {
-  const amount     = parseFloat(document.getElementById('insuredAmount').value.replace(/\s/g,'')) || 0;
-  const client     = document.getElementById('clientType').value;
-  const carYear    = document.getElementById('carYear').value;
-  const warranty   = document.getElementById('warranty').value;
-  const drivers    = document.getElementById('drivers').value;
-  const franchise  = document.getElementById('franchise').value;
-  const payment    = document.getElementById('payment').value;
-  const jackRules  = document.getElementById('jackRules').value;
-  const region     = document.getElementById('region').value;
-  const theft      = document.getElementById('theft').value;
-  const theftExPct = Math.min(parseFloat(document.getElementById('theftExclude').value) || 0, 30) / 100;
-  const electric   = document.getElementById('electric').value;
-  const bm         = document.getElementById('bm').value;
-  const lossRatio  = document.getElementById('lossRatio').value;
-  const profit = 0.10; // fixed 10%
-  const commission = 0; // hidden from UI
-
-  const rc = document.getElementById('resultCard');
-  const em = document.getElementById('errorMsg');
-  em.style.display = 'none';
-
-  // Validation: warranty only for cars > 2017
-  const warrantyYearsOk = ['2021-ից բարձր', '2016-2020', '2018-2020'];
-  const carYearNum = (carYear === '2021-ից բարձր') ? 2021 :
-                     (carYear === '2016-2020') ? 2018 :
-                     (carYear === '2011-2015') ? 2013 :
-                     (carYear === '2006-2010') ? 2008 : 2003;
-  if (warranty === 'ներառել' && carYearNum < 2018) {
-    em.textContent = 'Սխալ: Երաշխիքային սպ. ներառելը թույլատրվում է միայն 2018թ.-ից բարձր տարեթվով մեքենաների համար։ Փոփոխեք «Մեքենայի տարեթիվ»-ը կամ ընտրեք «Չներառել»։';
-    em.style.display = 'block';
-    return;
-  }
-
-  // ԲՄ and Վnasaberutyun mutual exclusion
-  const bmVal = COEFF.bm[bm];
-  const lrVal = COEFF.lossRatio[lossRatio];
-
-  if (bmVal !== null && lrVal !== null) {
-    em.textContent = 'Սխալ: Ընտրեք ԲՄ կամ Վնasaberutyun — ոչ երկուսը միաժամանակ։';
-    em.style.display = 'block';
-    return;
-  }
-  if (bmVal === null && lrVal === null) {
-    em.textContent = 'Ընտրեք ԲՄ կամ Վնասաբերություն դաշտերը (Ընտրել միայն մեկը)';
-    em.style.display = 'block';
-    return;
-  }
-
-  // Amount bracket
-  const amtBracket = (amount < 7000000) ? '<7m' : '>7m';
-
-  // Base rate (C2 in calculator)
-  var _br = BASE_RATES[client] && BASE_RATES[client][carYear] && BASE_RATES[client][carYear][amtBracket]; var baseRate = _br || 0.013186813186813187;
-
-  // Sum of adjustments (C3:C16)
-  let adj = 0;
-  adj += COEFF.warranty[warranty] ?? 0;
-  adj += COEFF.drivers[drivers] ?? 0;
-  adj += COEFF.franchise[franchise] ?? 0;
-
-  // BM or Loss ratio (mutually exclusive)
-  if (bmVal !== null) adj += bmVal;
-  else if (lrVal !== null) adj += lrVal;
-
-  adj += COEFF.payment[payment] ?? 0;
-
-  // Jack rules: only for Ֆ.Ա.
-  if (client === 'Ֆիզիկական անձ') {
-    adj += COEFF.jackRules[jackRules] ?? 0;
-  }
-
-  // Theft risk
-  if (theft === 'չներառել') {
-    // Use theft exclusion %: coefficient scales proportionally from the -0.40% at 30%
-    adj += -0.003956043956043956 * (theftExPct / 0.30);
-  }
-
-  adj += COEFF.region[region] ?? 0;
-  adj += COEFF.electric[electric] ?? 0;
-
-  // C17 = base + adj (sum C2:C16)
-  const c17 = baseRate + adj;
-
-  // Tariff (C18) — with minimum floor logic
-  // Tariff = C17 / (1 - commission) / (1 - profit)
-  let tariff = c17 / (1 - commission) / (1 - profit);
-  var minFloor = (MIN_TARIFF[amtBracket] && MIN_TARIFF[amtBracket][client]) ? MIN_TARIFF[amtBracket][client] : 0.013;
-  if (tariff < minFloor) tariff = minFloor;
-
-  // Premium = ROUND(tariff * amount, -3)
-  const premiumRaw = tariff * amount;
-  const premium = Math.round(premiumRaw / 1000) * 1000;
-
-
-  // Display
-  document.getElementById('rAmount').textContent    = fmt(amount) + ' ֏';
-  document.getElementById('rNetRate').textContent = fmtPct2(tariff);
-  document.getElementById('resultCard').scrollIntoView({behavior:'smooth',block:'nearest'});
-  document.getElementById('rPremium').textContent   = fmt(premium) + ' ֏';
-}
-
-
-function formatAmountInput(el){
-  const digits = el.value.replace(/\D/g, '');
-  el.value = digits ? digits.replace(/\B(?=(\d{3})+(?!\d))/g, ' ') : '';
-}
-document.addEventListener('DOMContentLoaded', () => {
-  const amt = document.getElementById('insuredAmount');
-  if (!amt) return;
-
-  formatAmountInput(amt);
-
-  amt.addEventListener('input', () => {
-    const digits = amt.value.replace(/\D/g, '');
-    amt.value = digits;
-  });
-
-  amt.addEventListener('blur', () => {
-    formatAmountInput(amt);
-  });
-
-  amt.addEventListener('focus', () => {
-    amt.value = amt.value.replace(/\D/g, '');
-  });
+document.getElementById('amount').addEventListener('input',e=>{
+ const digits=e.target.value.replace(/\D/g,'').slice(0,15);
+ e.target.value=digits?new Intl.NumberFormat('fr-FR').format(Number(digits)).replace(/\u202f/g,' '):'';
 });
 
-// Run once on load with default values
-window.addEventListener('DOMContentLoaded', calculate);
+function calculate(){
+ const err=document.getElementById('calcError'); err.classList.add('hidden');
+ const amount=Number(document.getElementById('amount').value.replace(/\s/g,''));
+ const client=document.getElementById('client').value, year=document.getElementById('year').value;
+ const warranty=document.getElementById('warranty').value, bm=document.getElementById('bm').value, loss=document.getElementById('loss').value;
+ if(!amount||amount<=0)return showError('Լրացրեք ապահովագրական գումարը։');
+ if(warranty==='ներառել'&&year!=='2021-ից բարձր')return showError('Excel-ի տրամաբանությամբ երաշխիքային սպասարկումը կարելի է ներառել միայն «2021-ից բարձր» մեքենաների համար։');
+ if(bm!=='չընտրել'&&loss!=='չընտրել')return showError('Ընտրեք Բոնուս Մալուս կամ Վնասաբերություն դաշտերից միայն մեկը։');
+ if(bm==='չընտրել'&&loss==='չընտրել')return showError('Ընտրեք Բոնուս Մալուս կամ Վնասաբերություն դաշտերից մեկը։');
+
+ const bracket=amount<7000000?'<7':'>7', base=BASE[client][year][bracket];
+ const items=[['Բազային սակագին',base]];
+ items.push(['Երաշխիքային սպասարկում',warranty==='ներառել'?.30*base:0]);
+ items.push(['Անսահմանափակ վարորդներ',document.getElementById('drivers').value==='Անսահմանափակ'?.003:0]);
+ items.push(['Ֆրանշիզա',FR[document.getElementById('franchise').value]]);
+ items.push(['Բոնուս Մալուս',bm==='չընտրել'?0:BM[bm]]);
+ items.push(['Վնասաբերություն',loss==='Վնասաբերությունը >= 90%'?.15*base:0]);
+
+ const pay=document.getElementById('payment').value;
+ items.push(['Վճարման ձև',({'Միանվագ':0,'2 վճարում':.05,'4 վճարում':.10,'12 վճարում':.20}[pay])*base]);
+ items.push(['Ճեկ կանոններ',(client==='Ֆիզիկական անձ'&&document.getElementById('jack').value==='ներառել')?.20*base:0]);
+
+ const theft=document.getElementById('theft').value;
+ const theftPct=Math.min(Math.max(Number(document.getElementById('theftPct').value)||0,0),30)/100;
+ items.push(['Գողության ռիսկ',theft==='չներառել'?-theftPct*base:0]);
+
+ const region=document.getElementById('region').value;
+ items.push(['Տարածաշրջան',({'Միայն ՀՀ':0,'ՀՀ և Վրաստան':.05,'ՀՀ, Վրաստան և ԱՊՀ երկրներ':.20}[region])*base]);
+ items.push(['Էլեկտրոմոբիլ',document.getElementById('electric').value==='Այո'?-.001:0]);
+
+ const net=items.reduce((s,x)=>s+x[1],0);
+ const commission=(Number(document.getElementById('commission').value)||0)/100, profit=.10;
+ if(commission<0||commission>=1)return showError('Միջնորդավճարը պետք է լինի 0%-ից մինչև 100%-ից փոքր։');
+ let tariff=net/(1-commission)/(1-profit);
+ tariff=Math.max(tariff,FLOOR[bracket][client]);
+ const premium=Math.round((tariff*amount)/1000)*1000;
+ const commissionAmount=premium*commission;
+
+ document.getElementById('rAmount').textContent=fmt(amount)+' AMD';
+ document.getElementById('rTariff').textContent=pct(tariff);
+ document.getElementById('rCommission').textContent=commission.toFixed(4).replace(/0+$/,'').replace(/\.$/,'')+'% / '+fmt(commissionAmount)+' AMD';
+ document.getElementById('rPremium').textContent=fmt(premium)+' AMD';
+ document.getElementById('resultCard').scrollIntoView({behavior:'smooth',block:'start'});
+}
+function showError(msg){
+ const e=document.getElementById('calcError');e.textContent=msg;e.classList.remove('hidden');
+ document.getElementById('resultCard').classList.add('hidden');
+}
 </script>
 </body>
 </html>
