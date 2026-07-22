@@ -183,7 +183,6 @@
         <div>
           <label>Ծրագիր</label>
           <select id="spType" onchange="renderSpecialOptions(); calculate();">
-            <option value="egypt">Եգիպտոս՝ օրական սակագին</option>
             <option value="world30">Ամբողջ աշխարհ — մինչև 30 օր</option>
             <option value="world60">Ամբողջ աշխարհ — մինչև 60 օր</option>
             <option value="world90">Ամբողջ աշխարհ — մինչև 90 օր</option>
@@ -358,7 +357,6 @@ const stdRates = {
 };
 
 const special = {
-  egypt:{type:"perday", rate:250, minDays:3, note:"Եգիպտոս՝ 250 դրամ մեկ օրվա համար։"},
   world30:{type:"fixed", price:6500, note:"Ամբողջ աշխարհ՝ առավելագույնը 30 օր մեկ տարվա ընթացքում։"},
   world60:{type:"fixed", price:8600, note:"Ամբողջ աշխարհ՝ առավելագույնը 60 օր մեկ տարվա ընթացքում։"},
   world90:{type:"fixed", price:12000, note:"Ամբողջ աշխարհ՝ առավելագույնը 90 օր մեկ տարվա ընթացքում։"}
@@ -511,9 +509,16 @@ function calculate(){
     }
 
     const cov = document.getElementById('stdCoverage').value;
-    const rate = stdRates[country.zone][cov][range];
-    price = rate * days;
-    detail = `Գոտի ${country.zone} · ${rate} դրամ/օր × ${days} օր × տարիքային գործակից ${mult}`;
+
+    if(country.name === "Եգիպտոս"){
+      const rate = 250;
+      price = rate * days;
+      detail = `Եգիպտոս · ${rate} դրամ/օր × ${days} օր × տարիքային գործակից ${mult}`;
+    } else {
+      const rate = stdRates[country.zone][cov][range];
+      price = rate * days;
+      detail = `Գոտի ${country.zone} · ${rate} դրամ/օր × ${days} օր × տարիքային գործակից ${mult}`;
+    }
   } else if(mode === 'special') {
     const sp = special[document.getElementById('spType').value];
     const spDaysError = document.getElementById('spDaysError');
